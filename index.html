@@ -1,0 +1,107 @@
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cryptext</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000;
+            color: #00ff00;
+            font-family: 'Press Start 2P', cursive;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            padding: 16px;
+            text-align: center;
+        }
+        .title {
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+        }
+        .card {
+            background-color: #111;
+            padding: 24px;
+            border: 2px solid #00ff00;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+        .textarea {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #00ff00;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            background-color: #000;
+            color: #00ff00;
+            font-family: 'Press Start 2P', cursive;
+        }
+        .button {
+            background-color: #00ff00;
+            color: #000;
+            padding: 8px 16px;
+            border: 2px solid #00ff00;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-family: 'Press Start 2P', cursive;
+        }
+        .button:hover {
+            background-color: #00cc00;
+        }
+        .input {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #00ff00;
+            border-radius: 4px;
+            margin-top: 16px;
+            background-color: #000;
+            color: #00ff00;
+            font-family: 'Press Start 2P', cursive;
+        }
+    </style>
+    <script>
+        function encrypt(text) {
+            return btoa(text);
+        }
+
+        function decrypt(text) {
+            return atob(text);
+        }
+
+        function generateLink() {
+            const text = document.getElementById('textInput').value;
+            const encryptedText = encrypt(text);
+            const link = `${window.location.origin}${window.location.pathname}?text=${encryptedText}`;
+            document.getElementById('textInput').value = link;
+        }
+
+        function displayDecryptedText() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encryptedText = urlParams.get('text');
+            if (encryptedText) {
+                const decryptedText = decrypt(encryptedText);
+                document.getElementById('textInput').value = decryptedText;
+            }
+        }
+
+        window.onload = displayDecryptedText;
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Cryptext</h1>
+        <div class="card">
+            <textarea id="textInput" class="textarea" rows="5" placeholder="Écrivez votre texte ici..."></textarea>
+            <button onclick="generateLink()" class="button">Générer le lien</button>
+        </div>
+    </div>
+</body>
+</html>
