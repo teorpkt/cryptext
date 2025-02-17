@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CrypText</title>
+    <title>Cryptext</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
@@ -71,18 +71,24 @@
             const expirationDate = document.getElementById('expirationDate').value;
             const encryptedText = encrypt(text);
             const encryptedDate = encrypt(expirationDate);
-            const link = `${window.location.origin}${window.location.pathname}?text=${encryptedText}&expires=${encryptedDate}`;
+            const combinedData = `text=${encryptedText}&expires=${encryptedDate}`;
+            const encryptedCombinedData = encrypt(combinedData);
+            const link = `${window.location.origin}${window.location.pathname}?data=${encryptedCombinedData}`;
             document.getElementById('textInput').value = link;
         }
 
         function displayDecryptedText() {
             const urlParams = new URLSearchParams(window.location.search);
-            const encryptedText = urlParams.get('text');
-            const encryptedDate = urlParams.get('expires');
+            const encryptedCombinedData = urlParams.get('data');
             const currentDate = new Date().toISOString().split('T')[0];
 
-            if (encryptedText && encryptedDate) {
+            if (encryptedCombinedData) {
+                const combinedData = decrypt(encryptedCombinedData);
+                const params = new URLSearchParams(combinedData);
+                const encryptedText = params.get('text');
+                const encryptedDate = params.get('expires');
                 const expirationDate = decrypt(encryptedDate);
+
                 if (currentDate <= expirationDate) {
                     const decryptedText = decrypt(encryptedText);
                     document.getElementById('textInput').value = decryptedText;
@@ -102,7 +108,7 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="title">CrypText</h1>
+        <h1 class="title">Cryptext</h1>
         <div class="card">
             <textarea id="textInput" class="textarea" rows="5" placeholder="Écrivez votre texte ici..."></textarea>
             <input type="date" id="expirationDate" class="date-input" placeholder="Date d'expiration">
