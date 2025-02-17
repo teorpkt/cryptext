@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Application de Partage de Texte Crypté</title>
+    <title>CrypText</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
@@ -70,17 +70,19 @@
             const text = document.getElementById('textInput').value;
             const expirationDate = document.getElementById('expirationDate').value;
             const encryptedText = encrypt(text);
-            const link = `${window.location.origin}${window.location.pathname}?text=${encryptedText}&expires=${expirationDate}`;
+            const encryptedDate = encrypt(expirationDate);
+            const link = `${window.location.origin}${window.location.pathname}?text=${encryptedText}&expires=${encryptedDate}`;
             document.getElementById('textInput').value = link;
         }
 
         function displayDecryptedText() {
             const urlParams = new URLSearchParams(window.location.search);
             const encryptedText = urlParams.get('text');
-            const expirationDate = urlParams.get('expires');
+            const encryptedDate = urlParams.get('expires');
             const currentDate = new Date().toISOString().split('T')[0];
 
-            if (encryptedText && expirationDate) {
+            if (encryptedText && encryptedDate) {
+                const expirationDate = decrypt(encryptedDate);
                 if (currentDate <= expirationDate) {
                     const decryptedText = decrypt(encryptedText);
                     document.getElementById('textInput').value = decryptedText;
@@ -90,12 +92,17 @@
             }
         }
 
-        window.onload = displayDecryptedText;
+        window.onload = function() {
+            displayDecryptedText();
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('expirationDate').value = tomorrow.toISOString().split('T')[0];
+        };
     </script>
 </head>
 <body>
     <div class="container">
-        <h1 class="title">Application de Partage de Texte Crypté</h1>
+        <h1 class="title">CrypText</h1>
         <div class="card">
             <textarea id="textInput" class="textarea" rows="5" placeholder="Écrivez votre texte ici..."></textarea>
             <input type="date" id="expirationDate" class="date-input" placeholder="Date d'expiration">
