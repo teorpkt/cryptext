@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cryptext</title>
+    <title>Application de Partage de Texte Crypté</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
@@ -33,7 +33,7 @@
             border-radius: 8px;
             margin-bottom: 24px;
         }
-        .textarea {
+        .textarea, .input, .date-input {
             width: 100%;
             padding: 8px;
             border: 2px solid #00ff00;
@@ -56,16 +56,6 @@
         .button:hover {
             background-color: #00cc00;
         }
-        .input {
-            width: 100%;
-            padding: 8px;
-            border: 2px solid #00ff00;
-            border-radius: 4px;
-            margin-top: 16px;
-            background-color: #000;
-            color: #00ff00;
-            font-family: 'Press Start 2P', cursive;
-        }
     </style>
     <script>
         function encrypt(text) {
@@ -78,17 +68,25 @@
 
         function generateLink() {
             const text = document.getElementById('textInput').value;
+            const expirationDate = document.getElementById('expirationDate').value;
             const encryptedText = encrypt(text);
-            const link = `${window.location.origin}${window.location.pathname}?text=${encryptedText}`;
+            const link = `${window.location.origin}${window.location.pathname}?text=${encryptedText}&expires=${expirationDate}`;
             document.getElementById('textInput').value = link;
         }
 
         function displayDecryptedText() {
             const urlParams = new URLSearchParams(window.location.search);
             const encryptedText = urlParams.get('text');
-            if (encryptedText) {
-                const decryptedText = decrypt(encryptedText);
-                document.getElementById('textInput').value = decryptedText;
+            const expirationDate = urlParams.get('expires');
+            const currentDate = new Date().toISOString().split('T')[0];
+
+            if (encryptedText && expirationDate) {
+                if (currentDate <= expirationDate) {
+                    const decryptedText = decrypt(encryptedText);
+                    document.getElementById('textInput').value = decryptedText;
+                } else {
+                    document.getElementById('textInput').value = "Le texte a expiré et ne peut pas être décrypté.";
+                }
             }
         }
 
@@ -97,9 +95,10 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="title">Cryptext</h1>
+        <h1 class="title">Application de Partage de Texte Crypté</h1>
         <div class="card">
             <textarea id="textInput" class="textarea" rows="5" placeholder="Écrivez votre texte ici..."></textarea>
+            <input type="date" id="expirationDate" class="date-input" placeholder="Date d'expiration">
             <button onclick="generateLink()" class="button">Générer le lien</button>
         </div>
     </div>
